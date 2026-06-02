@@ -72,9 +72,9 @@ const AppAutomationsRoute = AppAutomationsRouteImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 const AppFormsFormIdRoute = AppFormsFormIdRouteImport.update({
-  id: '/$formId',
-  path: '/$formId',
-  getParentRoute: () => AppFormsRoute,
+  id: '/forms/$formId',
+  path: '/forms/$formId',
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -86,7 +86,7 @@ export interface FileRoutesByFullPath {
   '/app/bookings': typeof AppBookingsRoute
   '/app/contacts': typeof AppContactsRoute
   '/app/dashboard': typeof AppDashboardRoute
-  '/app/forms': typeof AppFormsRouteWithChildren
+  '/app/forms': typeof AppFormsRoute
   '/app/': typeof AppIndexRoute
   '/app/forms/$formId': typeof AppFormsFormIdRoute
 }
@@ -98,7 +98,7 @@ export interface FileRoutesByTo {
   '/app/bookings': typeof AppBookingsRoute
   '/app/contacts': typeof AppContactsRoute
   '/app/dashboard': typeof AppDashboardRoute
-  '/app/forms': typeof AppFormsRouteWithChildren
+  '/app/forms': typeof AppFormsRoute
   '/app': typeof AppIndexRoute
   '/app/forms/$formId': typeof AppFormsFormIdRoute
 }
@@ -112,7 +112,7 @@ export interface FileRoutesById {
   '/app/bookings': typeof AppBookingsRoute
   '/app/contacts': typeof AppContactsRoute
   '/app/dashboard': typeof AppDashboardRoute
-  '/app/forms': typeof AppFormsRouteWithChildren
+  '/app/forms': typeof AppFormsRoute
   '/app/': typeof AppIndexRoute
   '/app/forms/$formId': typeof AppFormsFormIdRoute
 }
@@ -237,25 +237,13 @@ declare module '@tanstack/react-router' {
     }
     '/app/forms/$formId': {
       id: '/app/forms/$formId'
-      path: '/$formId'
+      path: '/forms/$formId'
       fullPath: '/app/forms/$formId'
       preLoaderRoute: typeof AppFormsFormIdRouteImport
-      parentRoute: typeof AppFormsRoute
+      parentRoute: typeof AppRoute
     }
   }
 }
-
-interface AppFormsRouteChildren {
-  AppFormsFormIdRoute: typeof AppFormsFormIdRoute
-}
-
-const AppFormsRouteChildren: AppFormsRouteChildren = {
-  AppFormsFormIdRoute: AppFormsFormIdRoute,
-}
-
-const AppFormsRouteWithChildren = AppFormsRoute._addFileChildren(
-  AppFormsRouteChildren,
-)
 
 interface AppRouteChildren {
   AppAutomationsRoute: typeof AppAutomationsRoute
@@ -263,7 +251,8 @@ interface AppRouteChildren {
   AppBookingsRoute: typeof AppBookingsRoute
   AppContactsRoute: typeof AppContactsRoute
   AppDashboardRoute: typeof AppDashboardRoute
-  AppFormsRoute: typeof AppFormsRouteWithChildren
+  AppFormsRoute: typeof AppFormsRoute
+  AppFormsFormIdRoute: typeof AppFormsFormIdRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -273,7 +262,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppBookingsRoute: AppBookingsRoute,
   AppContactsRoute: AppContactsRoute,
   AppDashboardRoute: AppDashboardRoute,
-  AppFormsRoute: AppFormsRouteWithChildren,
+  AppFormsRoute: AppFormsRoute,
+  AppFormsFormIdRoute: AppFormsFormIdRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
