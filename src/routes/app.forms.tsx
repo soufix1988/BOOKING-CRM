@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus, Eye, Settings, Calendar, FileText, X, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Plus, Eye, Settings, Calendar, FileText, X, Loader2, Link2, Check } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { format } from "date-fns";
 
@@ -120,6 +120,14 @@ function Forms() {
   const [forms, setForms] = useState<Form[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  function copyLink(formId: string) {
+    const url = `${window.location.origin}/f/${formId}`;
+    navigator.clipboard.writeText(url).catch(() => {});
+    setCopiedId(formId);
+    setTimeout(() => setCopiedId(null), 2000);
+  }
 
   async function load() {
     const { data } = await supabase
@@ -221,14 +229,12 @@ function Forms() {
                 </div>
 
                 <div className="flex gap-2 pt-1 border-t border-border">
-                  <Link
-                    to="/app/forms/$formId"
-                    params={{ formId: form.id }}
-                    search={{ tab: "entries" }}
+                  <button
+                    onClick={() => copyLink(form.id)}
                     className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium border border-border hover:bg-muted transition"
                   >
-                    <Eye className="size-3.5" /> Entries
-                  </Link>
+                    {copiedId === form.id ? <><Check className="size-3.5 text-emerald-600" /> Copied!</> : <><Link2 className="size-3.5" /> Share</>}
+                  </button>
                   <Link
                     to="/app/forms/$formId"
                     params={{ formId: form.id }}

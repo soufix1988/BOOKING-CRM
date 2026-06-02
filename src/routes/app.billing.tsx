@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CreditCard, Download, Check } from "lucide-react";
+import { getSession } from "../lib/auth";
 
 export const Route = createFileRoute("/app/billing")({
   head: () => ({ meta: [{ title: "Billing — Nova" }] }),
@@ -14,6 +15,8 @@ const INVOICES = [
 ];
 
 function Billing() {
+  const session = getSession();
+  const userEmail = session?.email ?? "your account";
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
@@ -50,7 +53,7 @@ function Billing() {
             </div>
             <button className="text-sm text-brand-violet">Update</button>
           </div>
-          <div className="text-xs text-muted-foreground mt-3">Billed to alex@nova.io</div>
+          <div className="text-xs text-muted-foreground mt-3">Billed to {userEmail}</div>
         </div>
       </div>
 

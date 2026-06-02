@@ -20,6 +20,13 @@ import { Route as AppBookingsRouteImport } from './routes/app.bookings'
 import { Route as AppBillingRouteImport } from './routes/app.billing'
 import { Route as AppAutomationsRouteImport } from './routes/app.automations'
 import { Route as AppFormsFormIdRouteImport } from './routes/app.forms.$formId'
+import { Route as FFormIdRouteImport } from './routes/f.$formId'
+
+const FFormIdRoute = FFormIdRouteImport.update({
+  id: '/f/$formId',
+  path: '/f/$formId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -81,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/f/$formId': typeof FFormIdRoute
   '/app/automations': typeof AppAutomationsRoute
   '/app/billing': typeof AppBillingRoute
   '/app/bookings': typeof AppBookingsRoute
@@ -93,6 +101,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/f/$formId': typeof FFormIdRoute
   '/app/automations': typeof AppAutomationsRoute
   '/app/billing': typeof AppBillingRoute
   '/app/bookings': typeof AppBookingsRoute
@@ -107,6 +116,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/f/$formId': typeof FFormIdRoute
   '/app/automations': typeof AppAutomationsRoute
   '/app/billing': typeof AppBillingRoute
   '/app/bookings': typeof AppBookingsRoute
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
+    | '/f/$formId'
     | '/app/automations'
     | '/app/billing'
     | '/app/bookings'
@@ -134,6 +145,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/f/$formId'
     | '/app/automations'
     | '/app/billing'
     | '/app/bookings'
@@ -147,6 +159,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
+    | '/f/$formId'
     | '/app/automations'
     | '/app/billing'
     | '/app/bookings'
@@ -161,6 +174,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
+  FFormIdRoute: typeof FFormIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -242,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFormsFormIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/f/$formId': {
+      id: '/f/$formId'
+      path: '/f/$formId'
+      fullPath: '/f/$formId'
+      preLoaderRoute: typeof FFormIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -273,6 +294,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
+  FFormIdRoute: FFormIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

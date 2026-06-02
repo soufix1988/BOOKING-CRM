@@ -24,9 +24,11 @@ type Contact = {
   name: string;
   email: string | null;
   phone: string | null;
+  company: string | null;
   entries: Entry[];
   lastActivity: string;
   bookings: number;
+  status: "Customer" | "Lead";
 };
 
 function extractField(data: Record<string, string>, keys: string[]): string | null {
@@ -44,15 +46,21 @@ function buildContacts(entries: Entry[]): Contact[] {
     const name = extractField(entry.data, ["nom", "name", "prenom", "first"]) ?? "Anonymous";
     const email = extractField(entry.data, ["email", "mail", "e-mail"]);
     const phone = extractField(entry.data, ["tel", "phone", "mobile", "portable"]);
+    const company = extractField(entry.data, ["company", "entreprise", "société", "societe", "organization"]);
     const key = email ?? `${name}-${entry.form_id}`;
 
     if (!map.has(key)) {
-      map.set(key, { key, name, email, phone, entries: [], lastActivity: entry.submitted_at, bookings: 0 });
+      map.set(key, { key, name, email, phone, company, entries: [], lastActivity: entry.submitted_at, bookings: 0, status: "Lead" });
     }
     const c = map.get(key)!;
     c.entries.push(entry);
     if (entry.rdv_date) c.bookings++;
     if (entry.submitted_at > c.lastActivity) c.lastActivity = entry.submitted_at;
+  }
+
+  // Mark as Customer if they have at least one confirmed booking
+  for (const c of map.values()) {
+    if (c.entries.some(e => e.rdv_status === "Confirmé")) c.status = "Customer";
   }
 
   return Array.from(map.values()).sort((a, b) => b.lastActivity.localeCompare(a.lastActivity));
@@ -199,10 +207,10 @@ function Contacts() {
             <thead>
               <tr className="border-b border-border bg-muted/20">
                 <th className="px-5 py-3 text-left text-xs font-medium text-muted-foreground">Contact</th>
-                <th className="px-5 py-3 text-left text-xs font-medium text-muted-foreground hidden md:table-cell">Email</th>
-                <th className="px-5 py-3 text-left text-xs font-medium text-muted-foreground hidden lg:table-cell">Phone</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-muted-foreground hidden md:table-cell">Company</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-muted-foreground">Status</th>
                 <th className="px-5 py-3 text-left text-xs font-medium text-muted-foreground hidden sm:table-cell">Activity</th>
-                <th className="px-5 py-3 text-left text-xs font-medium text-muted-foreground">Last seen</th>
+                <th className="px-5 py-3 text-left text-xs font-medium text-muted-foreground hidden lg:table-cell">Last seen</th>
               </tr>
             </thead>
             <tbody>
@@ -219,14 +227,16 @@ function Contacts() {
                       </div>
                       <div>
                         <div className="font-medium">{c.name}</div>
-                        <div className="text-xs text-muted-foreground md:hidden">{c.email}</div>
+                        <div className="text-xs text-muted-foreground">{c.email}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-5 py-3 text-muted-foreground hidden md:table-cell">
-                    {c.email ? <a href={`mailto:${c.email}`} className="hover:text-foreground transition" onClick={e => e.stopPropagation()}>{c.email}</a> : "—"}
+                  <td className="px-5 py-3 text-muted-foreground hidden md:table-cell">{c.company ?? "—"}</td>
+                  <td className="px-5 py-3">
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${c.status === "Customer" ? "bg-emerald-500/10 text-emerald-600" : "bg-brand-violet/10 text-brand-violet"}`}>
+                      {c.status}
+                    </span>
                   </td>
-                  <td className="px-5 py-3 text-muted-foreground hidden lg:table-cell">{c.phone ?? "—"}</td>
                   <td className="px-5 py-3 hidden sm:table-cell">
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <span className="inline-flex items-center gap-1">
@@ -239,7 +249,7 @@ function Contacts() {
                       )}
                     </div>
                   </td>
-                  <td className="px-5 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                  <td className="px-5 py-3 text-xs text-muted-foreground whitespace-nowrap hidden lg:table-cell">
                     {format(new Date(c.lastActivity), "MMM d, yyyy")}
                   </td>
                 </tr>

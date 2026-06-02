@@ -23,6 +23,9 @@ type Form = {
     isAppointment?: boolean;
     aptDuration?: number;
     aptValidation?: string;
+    aptStartTime?: string;
+    aptEndTime?: string;
+    aptDays?: string[];
   };
 };
 
@@ -352,15 +355,59 @@ function FormEditor() {
             </div>
 
             {form.adv_config?.isAppointment && (
-              <div>
-                <label className="block text-xs text-muted-foreground mb-1">Slot duration (minutes)</label>
-                <select
-                  value={form.adv_config?.aptDuration ?? 30}
-                  onChange={e => setForm(f => f ? { ...f, adv_config: { ...f.adv_config, aptDuration: Number(e.target.value) } } : f)}
-                  className="w-full px-3 py-2 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  {[15, 20, 30, 45, 60, 90, 120].map(d => <option key={d} value={d}>{d} min</option>)}
-                </select>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">Slot duration (minutes)</label>
+                  <select
+                    value={form.adv_config?.aptDuration ?? 30}
+                    onChange={e => setForm(f => f ? { ...f, adv_config: { ...f.adv_config, aptDuration: Number(e.target.value) } } : f)}
+                    className="w-full px-3 py-2 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    {[15, 20, 30, 45, 60, 90, 120].map(d => <option key={d} value={d}>{d} min</option>)}
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">Start time</label>
+                    <input
+                      type="time"
+                      value={(form.adv_config as any)?.aptStartTime ?? "09:00"}
+                      onChange={e => setForm(f => f ? { ...f, adv_config: { ...f.adv_config, aptStartTime: e.target.value } } : f)}
+                      className="w-full px-3 py-2 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">End time</label>
+                    <input
+                      type="time"
+                      value={(form.adv_config as any)?.aptEndTime ?? "18:00"}
+                      onChange={e => setForm(f => f ? { ...f, adv_config: { ...f.adv_config, aptEndTime: e.target.value } } : f)}
+                      className="w-full px-3 py-2 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1.5">Available days</label>
+                  <div className="flex flex-wrap gap-2">
+                    {["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].map(day => {
+                      const days: string[] = (form.adv_config as any)?.aptDays ?? ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+                      const active = days.includes(day);
+                      return (
+                        <button
+                          key={day}
+                          type="button"
+                          onClick={() => {
+                            const next = active ? days.filter((d: string) => d !== day) : [...days, day];
+                            setForm(f => f ? { ...f, adv_config: { ...f.adv_config, aptDays: next } } : f);
+                          }}
+                          className={`px-3 py-1 rounded-full text-xs font-medium transition ${active ? "bg-brand-violet text-white" : "border border-border hover:bg-muted"}`}
+                        >
+                          {day.slice(0, 3)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             )}
           </div>
