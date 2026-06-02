@@ -1,9 +1,5 @@
 {
-  "buildCommand": "bun run build",
-  "outputDirectory": "dist/client",
+  "buildCommand": "bash build-vercel.sh",
   "installCommand": "bun install",
-  "framework": null,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "framework": null
 }
