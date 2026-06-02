@@ -19,6 +19,7 @@ import { Route as AppContactsRouteImport } from './routes/app.contacts'
 import { Route as AppBookingsRouteImport } from './routes/app.bookings'
 import { Route as AppBillingRouteImport } from './routes/app.billing'
 import { Route as AppAutomationsRouteImport } from './routes/app.automations'
+import { Route as AppFormsFormIdRouteImport } from './routes/app.forms.$formId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -70,6 +71,11 @@ const AppAutomationsRoute = AppAutomationsRouteImport.update({
   path: '/automations',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFormsFormIdRoute = AppFormsFormIdRouteImport.update({
+  id: '/$formId',
+  path: '/$formId',
+  getParentRoute: () => AppFormsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,8 +86,9 @@ export interface FileRoutesByFullPath {
   '/app/bookings': typeof AppBookingsRoute
   '/app/contacts': typeof AppContactsRoute
   '/app/dashboard': typeof AppDashboardRoute
-  '/app/forms': typeof AppFormsRoute
+  '/app/forms': typeof AppFormsRouteWithChildren
   '/app/': typeof AppIndexRoute
+  '/app/forms/$formId': typeof AppFormsFormIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,8 +98,9 @@ export interface FileRoutesByTo {
   '/app/bookings': typeof AppBookingsRoute
   '/app/contacts': typeof AppContactsRoute
   '/app/dashboard': typeof AppDashboardRoute
-  '/app/forms': typeof AppFormsRoute
+  '/app/forms': typeof AppFormsRouteWithChildren
   '/app': typeof AppIndexRoute
+  '/app/forms/$formId': typeof AppFormsFormIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,8 +112,9 @@ export interface FileRoutesById {
   '/app/bookings': typeof AppBookingsRoute
   '/app/contacts': typeof AppContactsRoute
   '/app/dashboard': typeof AppDashboardRoute
-  '/app/forms': typeof AppFormsRoute
+  '/app/forms': typeof AppFormsRouteWithChildren
   '/app/': typeof AppIndexRoute
+  '/app/forms/$formId': typeof AppFormsFormIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/forms'
     | '/app/'
+    | '/app/forms/$formId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/forms'
     | '/app'
+    | '/app/forms/$formId'
   id:
     | '__root__'
     | '/'
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/app/dashboard'
     | '/app/forms'
     | '/app/'
+    | '/app/forms/$formId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -223,8 +235,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAutomationsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/forms/$formId': {
+      id: '/app/forms/$formId'
+      path: '/$formId'
+      fullPath: '/app/forms/$formId'
+      preLoaderRoute: typeof AppFormsFormIdRouteImport
+      parentRoute: typeof AppFormsRoute
+    }
   }
 }
+
+interface AppFormsRouteChildren {
+  AppFormsFormIdRoute: typeof AppFormsFormIdRoute
+}
+
+const AppFormsRouteChildren: AppFormsRouteChildren = {
+  AppFormsFormIdRoute: AppFormsFormIdRoute,
+}
+
+const AppFormsRouteWithChildren = AppFormsRoute._addFileChildren(
+  AppFormsRouteChildren,
+)
 
 interface AppRouteChildren {
   AppAutomationsRoute: typeof AppAutomationsRoute
@@ -232,7 +263,7 @@ interface AppRouteChildren {
   AppBookingsRoute: typeof AppBookingsRoute
   AppContactsRoute: typeof AppContactsRoute
   AppDashboardRoute: typeof AppDashboardRoute
-  AppFormsRoute: typeof AppFormsRoute
+  AppFormsRoute: typeof AppFormsRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -242,7 +273,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppBookingsRoute: AppBookingsRoute,
   AppContactsRoute: AppContactsRoute,
   AppDashboardRoute: AppDashboardRoute,
-  AppFormsRoute: AppFormsRoute,
+  AppFormsRoute: AppFormsRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }
 
